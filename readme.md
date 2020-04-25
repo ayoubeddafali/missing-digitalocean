@@ -10,10 +10,11 @@ It comes with handy functionnalities :
   - Schedule Shutdown of a resource 
   - Schedule Restart of a resource 
   - Schedule Delete of a resource 
+  - Shedule Snapshot of a Droplet
   - Schedule Shutdown of all resources in a Project 
   - Schedule Restart  of all resources in a Project 
   - Schedule Delete  of all resources in a Project 
-  - Beforehand notifications 
+  - ... 
 
 
 More functionnalities will be added eventually, basically the ones with the status *Will not implement*  in https://ideas.digitalocean.com/?page=3&project=DO. 
