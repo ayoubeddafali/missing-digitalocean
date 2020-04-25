@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>Digital Ocean Missing</title>
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://unpkg.com/element-ui@2.2.1/lib/theme-chalk/index.css">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/@mdi/font@3.x/css/materialdesignicons.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+  
+  <style>
+    body, html {
+      height: 100%;
+      max-height: 100%;
+    }
+  </style>
+
+  <% if (htmlWebpackPlugin.options.nodeModules) { %>
+  <!-- Add `node_modules/` to global paths so `require` works properly in development -->
+  <script>
+    require('module').globalPaths.push("<%= htmlWebpackPlugin.options.nodeModules.replace(/\\/g, '') %>")
+  </script>
+  <% } %>
+
+</head>
+
+<body>
+  <div id="app">
+    <v-app>
+      <v-content>
+        <v-container pa-0 ma-0 ></v-container>
+      </v-content>
+    </v-app>
+  </div>
+  
+  <!-- Set `__static` path to static files in production -->
+  <% if (!process.browser) { %>
+  <script>
+    if (process.env.NODE_ENV !== 'development') window.__static = require('path').join(__dirname, '/static').replace(
+      /\\/g, '\\\\')
+  </script>
+  <% } %>
+
+  <!-- webpack builds are automatically injected -->
+</body>
+
+</html>
