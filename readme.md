@@ -17,7 +17,7 @@ It comes with handy functionnalities :
   - ... 
 
 
-More functionnalities will be added eventually, basically the ones with the status *Will not implement*  in https://ideas.digitalocean.com/?page=3&project=DO. 
+More functionnalities will be added eventually, basically the ones with the status *Will not implement*  in https://ideas.digitalocean.com/?project=DO&sort=popular&status=6001166983750348036. 
 
 
 ### Build 
