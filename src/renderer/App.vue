@@ -7,7 +7,7 @@
         </a>
       </router-link>
 
-      <router-link tag="li" :to="{ name: 'Projects',  params: { do_token: this.do_token } }" v-if="do_token">
+      <router-link tag="li" :to="{ name: 'Projects' }" v-if="token">
         <a id="projects"> 
           <span>Projects</span>  
         </a>
@@ -82,9 +82,9 @@
             <v-list-item-content>
               <v-list-item-title>Token</v-list-item-title>
                   <v-text-field
-                    v-model="do_token"
+                    v-model="token"
                     :counter="10"
-                    label="DO Token"
+                    label="Digital Ocean Token"
                     required
                   ></v-text-field>
             </v-list-item-content>
@@ -102,6 +102,8 @@
 <script>
 import 'vuetify/dist/vuetify.min.css'
 import { Push } from 'vue-burger-menu' 
+import { mapGetters, mapActions } from 'vuex'
+
 
 const os = require("os");
 const storage = require("electron-json-storage");
@@ -112,56 +114,39 @@ export default {
   data() {
       return {
         showSettingsDialog: false,
-        do_token: undefined,
         showAlertDialog: false
       }
+  },
+  computed: {
+    ...mapGetters({
+      token: 'getToken'
+    })
   },
   components: {
     Push
   },
   created(){
-    var self = this 
-    storage.has("do_token", function(error, hasKey) {
-        if (error) {
-          throw error; 
-        }
-        if (hasKey) {
-          console.log("There is data stored as `do_token`");
-          storage.get("do_token", function(error, data) {
-            if (error) throw error;
-            if ( data.do_token ){
-                self.do_token = data["do_token"]
-                self.showAlertDialog = false 
-                return true 
-            }
-        });
-        } else {
-          self.showAlertDialog = true 
-          console.log("No data stored as `do_token`");
-          return false; 
-        }
-      })
+    let status = this.getTokenFromLocal()
+
+    if ( status ) {
+      this.showAlertDialog = false
+    } else {
+      this.showAlertDialog = true 
+    }
+
   },
   methods: {
+    ...mapActions({
+      saveToken: 'saveTokenLocally',
+      getTokenFromLocal: 'getTokenFromLocal'
+    }),
     openSettingsDialog(){
       this.showAlertDialog = false 
       this.showSettingsDialog = true 
     },
     saveSettings(){
-      var self = this 
-      console.log(this.do_token)
-      if ( this.do_token != undefined && this.do_token.trim() != "") {
-         storage.set(
-          "do_token",
-          {
-            do_token: this.do_token,
-          },
-          function(error) {
-            if (error) throw error;
-          }
-        );
-        this.showSettingsDialog = false 
-      }
+      let status = this.saveToken(this.token)
+      if ( status ) this.showSettingsDialog = false 
     },
   }
 };

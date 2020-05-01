@@ -12,6 +12,7 @@ Vue.config.productionTip = false
 import ElementUI from "element-ui";
 import locale from "element-ui/lib/locale/lang/en";
 
+import store from '../store/index'
 
 Vue.use(Vuetify)
 Vue.use(VueResource);
@@ -29,6 +30,7 @@ new Vue({
   components: {
     App
   },
+  store,
   router,
   template: '<App/>',
   vuetify: new Vuetify()
