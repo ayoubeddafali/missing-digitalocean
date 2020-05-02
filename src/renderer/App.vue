@@ -1,23 +1,25 @@
 <template>
   <div id="app" data-app="true">
-    <Push >
-      <router-link tag="li" to="/">
+    <Push :closeOnNavigation="true">
+      <router-link tag="li"  to="/">
         <a id="home"> 
           <span>Home</span>  
         </a>
       </router-link>
 
-      <router-link tag="li" :to="{ name: 'Projects' }" v-if="token">
+      <router-link tag="li" :to="{ name: 'Projects' }" v-if="tokenExist()">
         <a id="projects"> 
           <span>Projects</span>  
         </a>
       </router-link>
+      
+      <li>
+        <a href="#" id="Settings" @click="openSettingsDialog()"> 
+          <span>Settings</span>  
+        </a>
+      </li>
 
-      <a id="Settings" @click="openSettingsDialog()"> 
-        <span>Settings</span>  
-      </a>
-
-      <router-link tag="li" to="/contact">
+      <router-link tag="li"  to="/contact">
         <a id="about"> 
           <span>Contact</span>  
         </a>
@@ -83,7 +85,6 @@
               <v-list-item-title>Token</v-list-item-title>
                   <v-text-field
                     v-model="token"
-                    :counter="10"
                     label="Digital Ocean Token"
                     required
                   ></v-text-field>
@@ -100,53 +101,63 @@
 
 
 <script>
+
 import 'vuetify/dist/vuetify.min.css'
 import { Push } from 'vue-burger-menu' 
 import { mapGetters, mapActions } from 'vuex'
 
-
-const os = require("os");
-const storage = require("electron-json-storage");
-
-
 export default {
   name: "App",
-  data() {
-      return {
-        showSettingsDialog: false,
-        showAlertDialog: false
-      }
-  },
-  computed: {
-    ...mapGetters({
-      token: 'getToken'
-    })
-  },
   components: {
     Push
   },
-  created(){
-    let status = this.getTokenFromLocal()
-
-    if ( status ) {
-      this.showAlertDialog = false
-    } else {
-      this.showAlertDialog = true 
+  data() {
+    return {
+      token: "",
+      activeLink: 0,
+      showSettingsDialog: false,
+      showAlertDialog: false
     }
-
+  },
+  mounted(){
+    this.setTokenFromLocalStorage()
+  },
+  computed: {
+    ...mapGetters({
+      getToken: 'getToken'
+    })
   },
   methods: {
     ...mapActions({
-      saveToken: 'saveTokenLocally',
+      setToken: 'setToken',
+      saveTokenLocally: 'saveTokenLocally',
       getTokenFromLocal: 'getTokenFromLocal'
     }),
+    tokenExist() { 
+      return this.token && this.token != ""
+    },
     openSettingsDialog(){
+      this.activeLink = 1
       this.showAlertDialog = false 
       this.showSettingsDialog = true 
     },
+    setTokenFromLocalStorage(){
+
+      this.$store.dispatchPromise('getTokenFromLocal',  {}).then((response) => {
+        this.showAlertDialog = false 
+        this.token = this.getToken
+      }).catch((error) => {
+        this.showAlertDialog = true 
+      } )
+    },
     saveSettings(){
-      let status = this.saveToken(this.token)
-      if ( status ) this.showSettingsDialog = false 
+      this.$store.dispatchPromise('saveTokenLocally', { token: this.token  })
+        .then((response) => {
+          this.showSettingsDialog = false 
+        })
+        .catch((error) => {
+          this.showSettingsDialog = true 
+        }) 
     },
   }
 };
@@ -160,6 +171,11 @@ export default {
       -webkit-box-sizing: border-box;
       box-sizing: border-box;
     }
+    
+    nav li:hover {
+      color: white;
+      font-weight: bold;
+   }
 
     html {
       height: 100%;
@@ -221,12 +237,14 @@ export default {
       fill: #373a47;
     }
     .bm-menu {
-      background: #373a47;
+      background: #031b4d;
       a {
         color: #b8b7ad;
         &:hover,
         &:focus {
-          color: #c94e50;
+          color: white;
+          text-decoration: none; 
+          font-weight: bold;
         }
       }
     }

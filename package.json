@@ -54,6 +54,7 @@
   "dependencies": {
     "axios": "^0.18.0",
     "electron-json-storage": "^4.1.8",
+    "electron-promise-ipc": "^2.1.0",
     "element-ui": "2.2.1",
     "isomorphic-git": "^0.66.0",
     "java-properties": "^1.0.2",

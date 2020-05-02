@@ -2,7 +2,7 @@
   <v-container >
     <v-row>
 
-      <v-col cols="6" sm="4" v-for="project in projects" >
+      <v-col cols="6" sm="4" v-for="project in projects">
         <v-card raised class="mx-auto card-gradient"  dark max-width="400">
           <v-card-title>
             <v-icon large left >
@@ -55,51 +55,40 @@
   </v-container>
 </template>
 <script>
-  export default {
-    data () {
-      return {
-        projects: [], 
-        actionsDialog: false,
-        scheduleDialog: false,
-        actions: [
-          { text: 'Shutdown' },
-          { text: 'Restart' },
-          { text: 'Destroy' },
-        ],
-      }
-    },
-    props: {
-      do_token: undefined
-    },
-    created(){
 
+import { mapGetters, mapActions } from 'vuex'
 
-      this.$http.get("https://api.digitalocean.com/v2/projects", {
-          headers: {
-            'Access-Control-Allow-Origin': '*',
-            'Access-Control-Allow-Methods' : 'GET,PUT,POST,DELETE,PATCH,OPTIONS',
-            'Authorization': `Bearer ${this.do_token}`
-          }
-        })
-        .then(function (response) {
-          // handle success
-          this.projects = response.body.projects
-        })
-        .catch(function (error) {
-          // handle error
-          console.log(error);
-        })
-        .then(function () {
-          // always executed
-        });
-    }, 
-    methods: {
-      openActionsDialog(){
-        console.log("Opening Actions")
-        this.actionsDialog = true 
-      }
+export default {
+  data () {
+    return {
+      actionsDialog: false,
+      scheduleDialog: false,
+      actions: [
+        { text: 'Shutdown' },
+        { text: 'Restart' },
+        { text: 'Destroy' },
+      ],
+    }
+  },
+  computed: {
+    ...mapGetters({
+      token: 'getToken',
+      projects: 'getProjects'
+    })
+  },
+  mounted(){
+    this.$store.dispatchPromise("fetchProjects", { token: this.token  })
+  }, 
+  methods: {
+    ...mapActions({
+      fetchProjects: 'fetchProjects'
+    }),
+    openActionsDialog(){
+      console.log("Opening Actions")
+      this.actionsDialog = true 
     }
   }
+}
 </script>
 
 <style scoped>
