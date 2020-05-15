@@ -2,8 +2,9 @@
 
 A simple desktop application for Digital Ocean users ( WIP ). 
 
-![DOMissing1](images/do_missing1.png)
-![DOMissing2](images/do_missing2.png)
+ Demo 
+
+![DEMO](images/do.gif)
 
 It comes with handy functionnalities : 
 
