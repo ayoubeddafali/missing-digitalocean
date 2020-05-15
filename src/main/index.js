@@ -1,6 +1,6 @@
-import { app, BrowserWindow, Menu } from 'electron'
+import { app, BrowserWindow  } from 'electron'
 
-import '../store'
+import '../store/index'
 
 /**
  * Set `__static` path to static files in production
@@ -10,10 +10,7 @@ if (process.env.NODE_ENV !== 'development') {
   global.__static = require('path').join(__dirname, '/static').replace(/\\/g, '\\\\')
 }
 
-
-
 let mainWindow
-let gitConfigWindow 
 
 const winURL = process.env.NODE_ENV === 'development'
   ? `http://localhost:9080`
@@ -32,20 +29,7 @@ function createWindow () {
     webPreferences: {webSecurity: false}
   })
 
-  // var menu = Menu.buildFromTemplate([
-  //   {
-  //       label: 'Menu',
-  //       submenu: [
-  //           {
-  //             label:'Exit', 
-  //             click() { 
-  //                 app.quit() 
-  //             } 
-  //         }
-  //       ]
-  //       }
-  //   ])
-  // Menu.setApplicationMenu(menu); 
+  mainWindow.maximize()
 
   mainWindow.loadURL(winURL)
   // mainWindow.webContents.openDevTools()

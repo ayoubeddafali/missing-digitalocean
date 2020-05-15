@@ -12,7 +12,25 @@
           <span>Projects</span>  
         </a>
       </router-link>
-      
+
+      <router-link tag="li" :to="{ name: 'Droplets' }" v-if="tokenExist()">
+        <a id="droplets"> 
+          <span>Droplets</span>  
+        </a>
+      </router-link>
+
+      <router-link tag="li" :to="{ name: 'Kubernetes' }" v-if="tokenExist()">
+        <a id="kubernetes"> 
+          <span>Kubernetes</span>  
+        </a>
+      </router-link>
+
+      <router-link disabled tag="li" :to="{ name: 'Jobs' }" v-if="tokenExist()">
+        <a id="jobs"> 
+          <span>Jobs</span>  
+        </a>
+      </router-link>     
+
       <li>
         <a href="#" id="Settings" @click="openSettingsDialog()"> 
           <span>Settings</span>  
@@ -84,7 +102,7 @@
             <v-list-item-content>
               <v-list-item-title>Token</v-list-item-title>
                   <v-text-field
-                    v-model="token"
+                    :value="token"
                     label="Digital Ocean Token"
                     required
                   ></v-text-field>
@@ -104,7 +122,7 @@
 
 import 'vuetify/dist/vuetify.min.css'
 import { Push } from 'vue-burger-menu' 
-import { mapGetters, mapActions } from 'vuex'
+import { mapState, mapActions } from 'vuex'
 
 export default {
   name: "App",
@@ -113,7 +131,6 @@ export default {
   },
   data() {
     return {
-      token: "",
       activeLink: 0,
       showSettingsDialog: false,
       showAlertDialog: false
@@ -123,16 +140,11 @@ export default {
     this.setTokenFromLocalStorage()
   },
   computed: {
-    ...mapGetters({
-      getToken: 'getToken'
+    ...mapState({
+      token: 'token'
     })
   },
   methods: {
-    ...mapActions({
-      setToken: 'setToken',
-      saveTokenLocally: 'saveTokenLocally',
-      getTokenFromLocal: 'getTokenFromLocal'
-    }),
     tokenExist() { 
       return this.token && this.token != ""
     },
@@ -142,10 +154,9 @@ export default {
       this.showSettingsDialog = true 
     },
     setTokenFromLocalStorage(){
-
-      this.$store.dispatchPromise('getTokenFromLocal',  {}).then((response) => {
+      var self = this 
+      this.$store.dispatchPromise('getTokenFromLocal', {}).then((response) => {
         this.showAlertDialog = false 
-        this.token = this.getToken
       }).catch((error) => {
         this.showAlertDialog = true 
       } )

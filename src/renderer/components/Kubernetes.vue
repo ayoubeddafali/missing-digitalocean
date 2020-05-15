@@ -1,6 +1,6 @@
 <template>
   <div id="test">
-    <p> This is the contact view </p>
+    <p>Kubernetes Here</p>
   </div>
 </template>
 

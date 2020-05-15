@@ -1,9 +1,7 @@
-const os = require("os");
 const storage = require("electron-json-storage");
-import axios from 'axios'
-
 const BASE_URL = "https://api.digitalocean.com/v2"
 
+import axios from 'axios'
 
 export const saveTokenLocally = ( {commit}, payload ) => {
   // check if the token is an empty string 
@@ -29,10 +27,6 @@ export const saveTokenLocally = ( {commit}, payload ) => {
  
 }
 
-export const setToken = ({commit}, token) => {
-  commit('setDigitalOceanToken', token)
-}
-
 
 export const getTokenFromLocal = ( {commit} , payload ) => {
   return new Promise((resolve, reject) => {
@@ -44,13 +38,13 @@ export const getTokenFromLocal = ( {commit} , payload ) => {
         storage.get("DIGITAL_OCEAN_TOKEN", function(error, data) {
           if (error) reject({ status: "fail", message: "Error when getting the key from the storage" })
           if ( data.token ){
-              console.log("Commiting...")
+              console.log("Found in local storage " + data.token)
               commit("setDigitalOceanToken", data.token)
           } else { 
             reject({ status: "fail", message: "No data found in DIGITAL_OCEAN_TOKEN"})
           }
         })
-        resolve({ status: "success", message: "Token was set with success" })
+        resolve({ status: "success", message: "Token was set with success"})
       } else {
         console.log("No data stored as `DIGITAL_OCEAN_TOKEN`");
         reject({ status: "fail", message: "no data stored as DIGITAL_OCEAN_TOKEN" })
@@ -70,5 +64,48 @@ export const fetchProjects = ({ commit }, payload) => {
     commit('setProjects', response.data.projects)
   }).catch((error) => {
     console.log(error)
+  })
+}
+
+const applyAction = (resource, action) => {
+  console.log(`Going to apply ${action} Action on resource id  ${resource.id}`)
+}
+
+/**
+ * 
+ * @param payload { resource, cron, action}
+ */
+export const registerJob = ({ commit, state }, payload  ) => {
+  return new Promise((resolve, reject) => {
+    //  Add job to manager 
+    try {
+      state.manager.add(`${payload.resource.id}`, `${payload.cron}`, () => {
+        console.log(`[${payload.name}] Going to apply ${payload.action} Action on resource id ${payload.resource.id}`) 
+      })
+      state.manager.start(`${payload.resource.id}`)
+      commit('addJob', { 
+          id: payload.resource.id, 
+          name: payload.name, 
+          cron: payload.cron,
+          resource_type: payload.resource_type, 
+          action: payload.action, 
+          running: state.manager.status(payload.resource.id)
+      })
+      resolve("Job registered successfully")
+    }
+    catch(exception){
+      if ( exception.name == "JobExist") {
+        resolve(exception.message)
+      }else {
+        reject(exception.message)
+      }
+    }
+  })
+}
+
+export const getJobs = ({commit, state}, payload) => {
+  return new Promise((resolve, reject) => {
+    // console.log(state.manager.jobs)
+    resolve(state.manager.jobs)
   })
 }
