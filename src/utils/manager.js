@@ -29,11 +29,17 @@ function CrontabManager(key, tab, task, options) {
 
 }
 
-CrontabManager.prototype.add = function(key, tab, task, options) {
+CrontabManager.prototype.add = function(key, tab, task, options, runOnce = false ) {
 
 	if ((typeof tab === 'string' || tab instanceof Date) && typeof key === 'string' && task instanceof Function) {
 		// console.log(JSON.stringify(options, null, " "));
+		
 		options = combineOptions(tab, task, options);
+		if ( runOnce ) {
+			options.onComplete = (() => {
+				this.stop(key);
+			})
+		}
 		// console.log(JSON.stringify(options, null, " "));
 		try {
 			if (this.jobs[key]) {
@@ -150,13 +156,17 @@ CrontabManager.prototype.listCrons = function() {
 	return manString;
 }
 
+CrontabManager.prototype.getJobsIds = function() {
+	return Object.keys(this.jobs)
+}
+
 CrontabManager.prototype.exists = function(tabKey) {
 	if (this.jobs[tabKey])
 		return true;
 	return false;
 }
 
-function combineOptions(tab, task, options, data = {}) {
+function combineOptions(tab, task, options) {
 	var newOpts = {};
 	newOpts.cronTime = tab; newOpts.onTick = task ;
 

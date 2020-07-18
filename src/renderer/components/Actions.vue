@@ -35,12 +35,15 @@
               placeholder="Nightly Shutdown of .."
             ></v-text-field>
           </v-col>
-          <v-col cols="12">
+          <v-col cols="12" sm="8" md="8" >
             <v-text-field
               v-model="cron"
               label="Cron"
               placeholder="* * * * *"
             ></v-text-field>
+          </v-col>
+          <v-col cols="12" sm="4" md="4">
+              <v-switch v-model="runOnce"  inset persistent-hint hint="Run Once"></v-switch>
           </v-col>
           <v-col cols="12" >
             <v-btn color="#396afc" dark @click="registerAJob()" >
@@ -65,6 +68,7 @@ function getDefaultData() {
       cron: "* * * * *",
       name: '',
       action: "Shutdown",
+      runOnce: false,
       actions: [
         { text: 'Shutdown' },
         { text: 'Restart' },
@@ -88,7 +92,7 @@ export default {
       this.$emit("set-visible", false)
     },
     registerAJob() { 
-      this.$store.dispatchPromise('registerJob', { cron: this.cron, resource: this.project, action: this.action, name: this.name, resource_type: this.type}).then((message) => {
+      this.$store.dispatchPromise('registerJob', { cron: this.cron, resource: this.project, action: this.action, name: this.name, resource_type: this.type, runOnce: this.runOnce}).then((message) => {
         this.$emit("set-visible", false);
         this.$emit("show-alert", { status: "success", message: message})
         this.reset()
