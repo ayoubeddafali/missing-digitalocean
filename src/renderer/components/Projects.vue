@@ -1,7 +1,7 @@
 <template>
   <v-container >
     <v-row v-if="projects.length == 0" >
-      <v-col cols="6" sm="4" v-for="index in 6" >
+      <v-col cols="6" sm="4" v-for="index in 6">
         <v-sheet
           color="grey lighten-4"
           class="px-3 pt-3"
@@ -18,18 +18,18 @@
       </v-col>
     </v-row>
     <v-row>
-      <v-col cols="6" sm="4" v-for="project in projects" >
-        <v-card raised class="mx-auto card-gradient"  dark max-width="400">
+      <v-col cols="8" sm="4" v-for="project in projects">
+        <v-card raised height="100%" class="mx-auto card-gradient"  dark max-width="400">
           <v-card-title>
             <v-icon large left >
               mdi-folder
             </v-icon>
 
-            <span class="title font-weight-light">{{ project.name  }}</span>
+            <span class="title font-weight-bold">{{ project.name  }}</span>
           </v-card-title>
 
-          <v-card-text class="headline font-weight-bold">
-            {{ project.description }}
+          <v-card-text>
+            <p> {{ project.description }}</p>
           </v-card-text>
           <v-card-actions>
             <v-btn text small bold  color="#EC407A" > <b>{{ project.environment }} </b> </v-btn>

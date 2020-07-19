@@ -1,5 +1,12 @@
 <template>
   <v-container >
+    <v-row v-if="jobs.length != 0">
+      <v-col cols="12" sm="12" md="12" class="d-flex justify-end">
+        <v-btn class="mx-2" fab dark color="indigo" @click="refreshJobs()">
+          <v-icon dark>mdi-cached</v-icon>
+        </v-btn>
+      </v-col>
+    </v-row>
     <v-row no-gutters v-if="jobs.length == 0">
       <v-col cols="12" sm="6" md="8" v-for="index in 10" :key=index>
         <v-sheet
@@ -130,7 +137,18 @@ export default {
   },
   methods: {
     updateJob(job, action){
-      console.log(`Going to do this action : ${action} on job ${job}`)
+      this.$store.dispatchPromise('runAction', { id: job, action: action}).then((msg) => {
+        console.log(msg);
+        this.$forceUpdate();
+        
+      })
+    },
+    refreshJobs() {
+      this.$store.dispatchPromise('refreshJobs', {}).then(() => {
+        console.log("Job refresh done");
+        this.$forceUpdate(); 
+        
+      })
     }
   }
 

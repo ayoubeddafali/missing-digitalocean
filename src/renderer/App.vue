@@ -1,5 +1,5 @@
 <template>
-  <div id="app" data-app="true">
+<v-app ip="app" data-app="true">
     <Push :closeOnNavigation="true">
       <router-link tag="li"  to="/">
         <a id="home"> 
@@ -113,7 +113,7 @@
 
       </v-card>
     </v-dialog>
-  </div>
+  </v-app>
 </template>
 
 

@@ -79,9 +79,12 @@ export const registerJob = ({ commit, state }, payload  ) => {
   return new Promise((resolve, reject) => {
     //  Add job to manager 
     try {
-      state.manager.add(`${payload.resource.id}`, `${payload.cron}`, () => {
+      state.manager.add(`${payload.resource.id}`, `${payload.cron}`, (stopRunOnceJobs) => {
         console.log(`[${payload.name}] Going to apply ${payload.action} Action on resource id ${payload.resource.id}`) 
-      })
+        if (payload.runOnce) {
+          stopRunOnceJobs()
+        }
+      }, {}, payload.runOnce)
       state.manager.start(`${payload.resource.id}`)
       commit('addJob', { 
           id: payload.resource.id, 
@@ -103,9 +106,65 @@ export const registerJob = ({ commit, state }, payload  ) => {
   })
 }
 
+export const refreshJobs = ({commit, state}, payload) => {
+  return new Promise((resolve, reject) => {
+    //  Add job to manager 
+    try {
+      var ids = state.manager.getJobsIds()
+      ids.forEach(id => {
+        commit('updateJobStatus', {
+          id: id,
+          running: state.manager.status(id)
+        })
+      });
+      resolve("Job registered successfully")
+    }
+    catch(exception){
+        reject(exception)
+    }
+  })
+}
+
 export const getJobs = ({commit, state}, payload) => {
   return new Promise((resolve, reject) => {
     // console.log(state.manager.jobs)
     resolve(state.manager.jobs)
+  })
+}
+
+export const runAction = ({commit, state}, payload) => {
+  return new Promise((resolve, reject) => {
+    try {
+      switch (payload.action) {
+        case 'Start':
+          state.manager.start(`${payload.id}`)
+          commit('updateJobStatus', {
+            id: payload.id,
+            running: state.manager.status(payload.id)
+          })
+          break;
+        case 'Stop':
+          state.manager.stop(`${payload.id}`)
+          commit('updateJobStatus', {
+            id: payload.id,
+            running: state.manager.status(payload.id)
+          })
+          break;
+        case 'Update':
+          break;
+        case 'Delete':
+          state.manager.stop(`${payload.id}`)
+          commit('deleteJob', {
+            id: payload.id
+          })
+          break;
+        default:
+          break;
+      }
+      resolve('Success')
+    } 
+    catch(exception){
+      reject(exception)
+    }
   })
 }
