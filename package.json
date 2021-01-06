@@ -52,7 +52,7 @@
     }
   },
   "dependencies": {
-    "axios": "^0.18.0",
+    "axios": "^0.21.1",
     "cron": "^1.8.2",
     "cron-job-manager": "^2.1.2",
     "electron-json-storage": "^4.1.8",
